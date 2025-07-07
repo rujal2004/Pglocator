@@ -21,15 +21,23 @@ A simple web application to search for Paying Guest (PG) accommodations in popul
 
 ## 📁 Project Structure
 
-bash
+
+
 pg-locator/
 ├── pgapp/                # Main Django app
+
 │   ├── templates/        # HTML templates
+
 │   ├── views.py          # Backend views and logic
+
 │   ├── urls.py           # URL routing
+
 ├── pg-locator/           # Django project config
+
 │   ├── settings.py       # Project settings
+
 ├── static/               # Static files (CSS, JS, images)
+
 ├── manage.py
 
 
