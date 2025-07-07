@@ -44,7 +44,7 @@ pg-locator/
 # Setup Instructions
 ###   1. Clone the Repository
 
-git clone https://github.com/your-username/pg-locator.git
+git clone https://github.com/rujal2004/Pglocator.git
 
 cd pg-locator
 
