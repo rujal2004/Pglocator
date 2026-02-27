@@ -1,0 +1,64 @@
+import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
+    user: null,
+    token: null,
+    listings: []  // 🔥 IMPORTANT: must exist
+};
+
+export const userSlice = createSlice({
+    name: "user",
+    initialState,
+    reducers: {
+        setLogin: (state, action) => {
+            state.user = action.payload.user;
+            state.token = action.payload.token;
+        },
+
+        setLogout: (state) => {
+            state.user = null;
+            state.token = null;
+            state.listings = [];
+        },
+
+        setListings: (state, action) => {
+            state.listings = action.payload.listings;
+        },
+
+        setTripList: (state, action) => {
+            if (state.user) {
+                state.user.tripList = action.payload;
+            }
+        },
+
+        setWhishList: (state, action) => {
+            if (state.user) {
+                state.user.whishList = action.payload;
+            }
+        },
+
+        setPropertyList: (state, action) => {
+            if (state.user) {
+                state.user.propertyList = action.payload;
+            }
+        },
+
+        setReservationList: (state, action) => {
+            if (state.user) {
+                state.user.reservationList = action.payload;
+            }
+        },
+    }
+});
+
+export const {
+    setLogin,
+    setLogout,
+    setListings,
+    setTripList,
+    setWhishList,
+    setPropertyList,
+    setReservationList
+} = userSlice.actions;
+
+export default userSlice.reducer;
