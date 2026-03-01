@@ -132,7 +132,7 @@ const creatorId = user?._id;
         });
 
         const response = await fetch(
-            "http://localhost:3000/api/v1/properties/create",
+            "http://localhost:8000/api/v1/properties/create",
             {
                 method: "POST",
                 body: listingForm

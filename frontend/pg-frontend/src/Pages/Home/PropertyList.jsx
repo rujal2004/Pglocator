@@ -17,7 +17,7 @@ const PropertyList = () => {
   const dispatch = useDispatch()
   const getPropertyList = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/users/${user._id}/properties`, {
+      const response = await fetch(`http://localhost:8000/api/v1/users/${user._id}/properties`, {
         method: "GET"
       })
       const data = await response.json()

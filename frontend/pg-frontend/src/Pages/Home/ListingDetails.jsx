@@ -21,7 +21,7 @@ const ListingDetails = () => {
     const getListingDetails = async () => {
         try {
             const response = await fetch(
-                `http://localhost:3000/api/v1/properties/${listingId}`,
+                `http://localhost:8000/api/v1/properties/${listingId}`,
                 {
                     method: "GET",
                 }
@@ -32,7 +32,7 @@ const ListingDetails = () => {
             }
             const data = await response.json();
             console.log(data)
-            setListing(data.listingOK);
+            setListing(data.listing);
             // setLoading(false);
         } catch (err) {
             console.log("Fetch Listing Details Failed", err.message);
@@ -82,7 +82,7 @@ const ListingDetails = () => {
                 endDate: dateRange[0].endDate.toDateString(),
                 totalPrice: listing.price * dayCount,
             }
-            const response = await fetch('http://localhost:3000/api/v1/bookings/create', {
+            const response = await fetch('http://localhost:8000/api/v1/bookings/create', {
                 method: "POST",
                 "headers": {
                     "Content-Type": "application/json",
@@ -121,7 +121,7 @@ const ListingDetails = () => {
                 <div className="photos">
                     {listing.listingPhotoPaths?.map((item, index) => (
                         <img key={index}
-                            src={`http://localhost:3000/${item.replace("public", "")}`}
+                            src={`http://localhost:8000/${item.replace("public", "")}`}
                             alt={`Listing photo ${index + 1}`}
                         />
                     ))}
@@ -139,7 +139,7 @@ const ListingDetails = () => {
 
                 <div className="profile">
                     <img
-                        src={`http://localhost:3000/${listing.creator.profileImagePath.replace(
+                        src={`http://localhost:8000/${listing.creator.profileImagePath.replace(
                             "public",
                             ""
                         )}`}

@@ -1,13 +1,13 @@
 const PageListingSchema = require("../modals/PageListingSchema");
 const UserSchema = require("../modals/UserSchema");
+const axios = require("axios");
 
 // ======================
 // CREATE LISTING
 // ======================
-const axios = require("axios");
-
 const createListing = async (req, res) => {
     console.log("createListing API HIT");
+
     try {
         const {
             creator,
@@ -43,25 +43,30 @@ const createListing = async (req, res) => {
 
         // 🔥 1. Create Full Address
         const fullAddress = `${streetAddress}, ${city}, ${province}, ${country}`;
+        console.log("Calling LocationIQ for:", fullAddress);
+        console.log("LOCATIONIQ_KEY:", process.env.LOCATIONIQ_KEY);
 
-        console.log("Calling HERE API for:", fullAddress);
-
-        // 🔥 2. Call HERE Geocoding API
+        // 🔥 2. Call LocationIQ API
         const geoResponse = await axios.get(
-            `https://geocode.search.hereapi.com/v1/geocode?q=${encodeURIComponent(fullAddress)}&apiKey=${process.env.HERE_API_KEY}`
+            "https://us1.locationiq.com/v1/search",
+            {
+                params: {
+                    key: process.env.LOCATIONIQ_KEY,
+                    q: fullAddress,
+                    format: "json"
+                }
+            }
         );
 
-        if (!geoResponse.data.items || geoResponse.data.items.length === 0) {
+        if (!geoResponse.data || geoResponse.data.length === 0) {
             return res.status(400).json({
                 success: false,
                 msg: "Invalid address. Could not fetch coordinates."
             });
         }
 
-        const position = geoResponse.data.items[0].position;
-
-        const latitude = position.lat;
-        const longitude = position.lng;
+        const latitude = geoResponse.data[0].lat;
+        const longitude = geoResponse.data[0].lon;
 
         console.log("Coordinates:", latitude, longitude);
 
@@ -99,7 +104,8 @@ const createListing = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("CREATE LISTING ERROR:", error);
+        console.log("CREATE LISTING ERROR:", error.response?.data || error.message);
+
         res.status(500).json({
             success: false,
             error: error.message
