@@ -23,6 +23,7 @@ const CategoryPage = () => {
           method: "GET",
         }
       );
+      /*This is the category type */
 
       const data = await response.json();
       dispatch(setListings({ listings: data.listings }));
