@@ -22,7 +22,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /** User Register **/
-router.post('/create', upload.array("listingPhotos"), createListing);
+const authMiddleware = require('../middleware/authMiddleware');
+
+router.post(
+  '/create',
+  authMiddleware,   // 🔥 ADD THIS
+  upload.array("listingPhotos"),
+  createListing
+);
 router.get('/', getAllListingProperty);
 router.get('/:listingId', getSingleProperty);
 router.get("/search/:search",searchProperty );

@@ -17,10 +17,15 @@ const TripList = () => {
 
   const getTripList = async () => {
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(
         `http://localhost:8000/api/v1/users/${userId}/trips`,
         {
           method: "GET",
+          headers:{
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
         }
       );
 

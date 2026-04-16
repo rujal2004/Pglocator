@@ -3,7 +3,7 @@ import '../Styles/ListingCard.scss'
 import { IoArrowBackCircle, IoArrowForwardCircleSharp } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setWhishList } from "../redux/state";
+import { setWishList } from "../redux/state";
 import { MdFavorite } from "react-icons/md";
 
 const ListingCard = ({
@@ -36,11 +36,11 @@ const ListingCard = ({
 
     /** Add to WhisList **/
     const user = useSelector((state) => state.user);
-    const whishList = user?.whishList || [];
+    const wishList = user?.wishList || [];
 
-    const isLiked = whishList.find((property) => property?._id === listingId);
+    const isLiked = wishList.find((property) => property?._id === listingId);
 
-    const patchwhishList = async () => {
+    const patchwishList = async () => {
         if (user?._id !== creator._id) {
             const response = await fetch(
               `http://localhost:3000/api/v1/users/${user?._id}/${listingId}`,
@@ -52,7 +52,7 @@ const ListingCard = ({
               }
             );
             const data = await response.json();
-            dispatch(setwhishList(data.whishList));
+            dispatch(setwishList(data.wishList));
           } else { return }
 
     }

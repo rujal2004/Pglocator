@@ -100,8 +100,16 @@ const creatorId = user?._id;
     console.log("User:", user);
     console.log("Creator ID:", creatorId);
 
-    if (!creatorId) {
+    // 🔥 TOKEN CHECK
+    const token = localStorage.getItem("token");
+
+    if (!token) {
         alert("Please login first!");
+        return;
+    }
+
+    if (!creatorId) {
+        alert("User not found!");
         return;
     }
 
@@ -120,7 +128,7 @@ const creatorId = user?._id;
         listingForm.append("bedroomCount", bedroomCount);
         listingForm.append("bedCount", bedCount);
         listingForm.append("bathroomCount", bathroomCount);
-        listingForm.append("amenities", JSON.stringify(amenities)); // important
+        listingForm.append("amenities", JSON.stringify(amenities));
         listingForm.append("title", formDescription.title);
         listingForm.append("description", formDescription.description);
         listingForm.append("highlight", formDescription.highlight);
@@ -135,6 +143,9 @@ const creatorId = user?._id;
             "http://localhost:8000/api/v1/properties/create",
             {
                 method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`, // 🔥 IMPORTANT
+                },
                 body: listingForm
             }
         );

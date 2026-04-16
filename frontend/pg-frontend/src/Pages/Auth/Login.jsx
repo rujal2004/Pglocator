@@ -26,6 +26,7 @@ const Login = () => {
       /** get data after fetching **/
       const loggedIn = await response.json();
       if (loggedIn.success) {
+        localStorage.setItem("token", loggedIn.token);
         dispatch(
           setLogin({
             user: loggedIn.user,

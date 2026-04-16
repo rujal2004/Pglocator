@@ -13,7 +13,7 @@ const GeocodeRoute = require('./Routes/GeocodeRoute');  // ✅ Added
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('./public'));
+app.use('/uploads', express.static('public/uploads')); 
 
 // test route
 app.get('/test', (req, res) => {
@@ -29,7 +29,7 @@ app.use('/api/v1/users', UserRoute);
 // ✅ NEW GEOCODE ROUTE
 app.use('/api/v1/geocode', GeocodeRoute);
 
-const port = process.env.PORT || 3000;   // ✅ Fixed
+const port = process.env.PORT || 8000;   // ✅ Fixed
 
 const start = async () => {
     try {

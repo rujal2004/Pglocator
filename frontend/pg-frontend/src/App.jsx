@@ -1,4 +1,5 @@
 import React from 'react'
+import ProtectedRoute from './utils/ProtectedRoute'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Register from './Pages/Auth/Register'
 import Login from './Pages/Auth/Login'
@@ -18,22 +19,67 @@ const App = () => {
     <div>
       <BrowserRouter>
         <Routes>
+
+          {/* PUBLIC ROUTES */}
           <Route path='/' element={<HomePage />} />
           <Route path='/register' element={<Register />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/create-listing' element={<CreateListing />} />
           <Route path='/properties/:listingId' element={<ListingDetails />} />
           <Route path="/properties/category/:category" element={<CategoryPage />} />
           <Route path="/properties/search/:search" element={<SearchingPage />} />
-          <Route path='/:userId/trips' element={<TripList />} />
-          <Route path='/:userId/wishList' element={<WhishList />} />
-          <Route path='/:userId/properties' element={<PropertyList />} />
-          <Route path='/:userId/reservations' element={<ReservationList />} />
+
+          {/* 🔒 PROTECTED ROUTES */}
+          <Route
+            path='/create-listing'
+            element={
+              <ProtectedRoute>
+                <CreateListing />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/:userId/trips'
+            element={
+              <ProtectedRoute>
+                <TripList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/:userId/wishList'
+            element={
+              <ProtectedRoute>
+                <WhishList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/:userId/properties'
+            element={
+              <ProtectedRoute>
+                <PropertyList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/:userId/reservations'
+            element={
+              <ProtectedRoute>
+                <ReservationList />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
-        <Footer/>
+
+        <Footer />
       </BrowserRouter>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

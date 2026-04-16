@@ -31,7 +31,7 @@ export const userSlice = createSlice({
             }
         },
 
-        setWhishList: (state, action) => {
+        setWishList: (state, action) => {
             if (state.user) {
                 state.user.whishList = action.payload;
             }
@@ -56,7 +56,7 @@ export const {
     setLogout,
     setListings,
     setTripList,
-    setWhishList,
+    setWishList,
     setPropertyList,
     setReservationList
 } = userSlice.actions;

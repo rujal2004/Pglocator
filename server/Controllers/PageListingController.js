@@ -1,16 +1,12 @@
-const PageListingSchema = require("../modals/PageListingSchema");
-const UserSchema = require("../modals/UserSchema");
 const axios = require("axios");
+const PageListingSchema = require("../modals/PageListingSchema");
 
-// ======================
-// CREATE LISTING
-// ======================
+/*** CREATE LISTING ***/
 const createListing = async (req, res) => {
     console.log("createListing API HIT");
 
     try {
         const {
-            creator,
             category,
             type,
             streetAddress,
@@ -30,6 +26,9 @@ const createListing = async (req, res) => {
             price,
         } = req.body;
 
+        // ✅ ALWAYS TRUST JWT
+        const creatorId = req.user.userId;
+
         const listingPhotos = req.files;
 
         if (!listingPhotos || listingPhotos.length === 0) {
@@ -41,12 +40,8 @@ const createListing = async (req, res) => {
 
         const listingPhotoPaths = listingPhotos.map((file) => file.path);
 
-        // 🔥 1. Create Full Address
         const fullAddress = `${streetAddress}, ${city}, ${province}, ${country}`;
-        console.log("Calling LocationIQ for:", fullAddress);
-        console.log("LOCATIONIQ_KEY:", process.env.LOCATIONIQ_KEY);
 
-        // 🔥 2. Call LocationIQ API
         const geoResponse = await axios.get(
             "https://us1.locationiq.com/v1/search",
             {
@@ -68,11 +63,8 @@ const createListing = async (req, res) => {
         const latitude = geoResponse.data[0].lat;
         const longitude = geoResponse.data[0].lon;
 
-        console.log("Coordinates:", latitude, longitude);
-
-        // 🔥 3. Save in Database
         const newListing = new PageListingSchema({
-            creator,
+            creator: creatorId,   // ✅ FIXED
             category,
             type,
             streetAddress,
@@ -113,24 +105,21 @@ const createListing = async (req, res) => {
     }
 };
 
-// ======================
-// GET ALL LISTINGS
-// ======================
+/*** GET ALL LISTINGS ***/
+
 const getAllListingProperty = async (req, res) => {
-    const qCategory = req.query.category;
-
     try {
-        let listings;
+        const { category } = req.query;   // 🔥 get from query
 
-        if (qCategory) {
-            listings = await PageListingSchema
-                .find({ category: qCategory })
-                .populate("creator");
-        } else {
-            listings = await PageListingSchema
-                .find({})
-                .populate("creator");
+        let filter = {};
+
+        if (category) {
+            filter.category = { $regex: category, $options: "i" }; // 🔥 apply filter
         }
+
+        const listings = await PageListingSchema
+            .find(filter)
+            .populate("creator");
 
         res.status(200).json({
             success: true,
@@ -138,20 +127,14 @@ const getAllListingProperty = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+        res.status(500).json({ error: error.message });
     }
 };
-
-// ======================
-// GET SINGLE LISTING
-// ======================
+/*** GET SINGLE LISTING ***/
 const getSingleProperty = async (req, res) => {
-    const { listingId } = req.params;
-
     try {
+        const { listingId } = req.params;
+
         const listing = await PageListingSchema
             .findById(listingId)
             .populate("creator");
@@ -167,48 +150,29 @@ const getSingleProperty = async (req, res) => {
             success: true,
             listing
         });
-
     } catch (error) {
-        res.status(404).json({
-            success: false,
-            error: error.message
-        });
+        res.status(404).json({ error: error.message });
     }
 };
 
-// ======================
-// SEARCH LISTINGS
-// ======================
+/*** SEARCH LISTING ***/
 const searchProperty = async (req, res) => {
-    const { search } = req.params;
-
     try {
-        let listings = [];
+        const { search } = req.params;
 
-        if (search === "all") {
-            listings = await PageListingSchema.find().populate("creator");
-        } else {
-            listings = await PageListingSchema.find({
-                $or: [
-                    { category: { $regex: search, $options: "i" } },
-                    { title: { $regex: search, $options: "i" } },
-                    { city: { $regex: search, $options: "i" } },
-                    { province: { $regex: search, $options: "i" } },
-                    { country: { $regex: search, $options: "i" } }
-                ]
-            }).populate("creator");
-        }
+        const listings = await PageListingSchema.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { city: { $regex: search, $options: "i" } }
+            ]
+        }).populate("creator");
 
         res.status(200).json({
             success: true,
             listings
         });
-
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+        res.status(500).json({ error: error.message });
     }
 };
 

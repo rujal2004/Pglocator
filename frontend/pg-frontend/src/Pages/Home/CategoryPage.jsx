@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../../Styles/TripList.scss";
 import Navbar from "../../Components/Navbar";
 import { useParams } from "react-router-dom";
@@ -7,27 +7,26 @@ import { setListings } from "../../redux/state";
 import Loader from "../../Components/Loader";
 import ListingCard from "../../Components/ListingCard";
 
-
 const CategoryPage = () => {
   const [loading, setLoading] = useState(true);
-  const { category } = useParams()
+  const { category } = useParams();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const listings = useSelector((state) => state.listings);
 
   const getFeedListings = async () => {
     try {
       const response = await fetch(
-          `http://localhost:8000/api/v1/properties?category=${category}`,
+        `http://localhost:8000/api/v1/properties?category=${category}`,
         {
           method: "GET",
         }
       );
-      /*This is the category type */
 
       const data = await response.json();
+
       dispatch(setListings({ listings: data.listings }));
-      console.log(listings)
+
       setLoading(false);
     } catch (err) {
       console.log("Fetch Listings Failed", err.message);
@@ -44,36 +43,28 @@ const CategoryPage = () => {
     <>
       <Navbar />
       <h1 className="title-list">{category} listings</h1>
+
       <div className="list">
-        {listings?.map(
-          ({
-            _id,
-            creator,
-            listingPhotoPaths,
-            city,
-            province,
-            country,
-            category,
-            type,
-            price,
-            booking = false,
-          }) => (
+        {listings?.length > 0 ? (
+          listings.map((item) => (
             <ListingCard
-              listingId={_id}
-              creator={creator}
-              listingPhotoPaths={listingPhotoPaths}
-              city={city}
-              province={province}
-              country={country}
-              category={category}
-              type={type}
-              price={price}
-              booking={booking}
+              key={item._id}   // 🔥 FIX: added key
+              listingId={item._id}
+              creator={item.creator}
+              listingPhotoPaths={item.listingPhotoPaths}
+              city={item.city}
+              province={item.province}
+              country={item.country}
+              category={item.category}
+              type={item.type}
+              price={item.price}
+              booking={item.booking || false}
             />
-          )
+          ))
+        ) : (
+          <h2>No listings found</h2>   // 🔥 helpful fallback
         )}
       </div>
-   
     </>
   );
 };
